@@ -14,7 +14,7 @@
 #define BUFSIZE 1024
 #define LOG   44
 #define HOME /index.html
-struct stat s;
+
 pthread_mutex_t m_lock;
 typedef struct num{
 	int *nn;
@@ -61,26 +61,26 @@ int cgi(char *buf){ //cgi
    return sum;
 
    }
-void log(int type,char *s0, char *s1, char *s2,int size) //아이피,파일명, 파일 크기 
+void log(char *s0, char *s1, char *s2,int size) //아이피,파일명, 파일 크기 
 {
    int fd ;
    char logbuffer[BUFSIZE*2];
 
-   switch (type) {
-   case LOG: (void)sprintf(logbuffer," INFO: %s %s %s %d",s0,s1, s2,size); break; //s0=send/req, s1= ip ,s2= path/filename , num=숫 자 
-   }   
+   
+   sprintf(logbuffer," INFO: %s %s %s %d",s0,s1, s2,size);  //s0=send/req, s1= ip ,s2= path/filename , num=숫 자 
+      
 
    if((fd = open("server.log", O_CREAT| O_WRONLY | O_APPEND,0644)) >= 0) {
-      (void)write(fd,logbuffer,strlen(logbuffer)); 
-      (void)write(fd,"\n",1);      
-      (void)close(fd);
+      write(fd,logbuffer,strlen(logbuffer)); 
+      write(fd,"\n",1);      
+      close(fd);
    }
 }
 void *web(void *n1)
 {
-	
+	struct stat s;
 	num2 *n2=(num2 *)n1;
-	printf("%d\n",n2->num);
+//	printf("%d\n",n2->num);
 	int *fd = n2->nn;
 	char *buff=n2->buff;
 //	printf("%s\n",buff);
@@ -141,13 +141,7 @@ void *web(void *n1)
             
             
             
-            
-            
-            
-            
-            
-            
-          log(LOG,"SEND",buff,file_name,strlen(buffer)-1); //ip,파일, 몇번 째
+          log("SEND",buff,file_name,strlen(buffer)-1); //ip,파일, 몇번 째
           
           
           
@@ -179,22 +173,10 @@ void *web(void *n1)
       // log(LOG,"SEND",buff,&buffer[5],hit); //ip,파일, 몇번 째
       
       
-      
-      
-      
-      
-     log(LOG,"SEND",buff,file_name,size); //ip,파일, 몇번 째
+     log("SEND",buff,file_name,size); //ip,파일, 몇번 째
      
      
-     
-     
-     
-     
-     
-     
-     
-     
-      //  printf("%s\nend\n\n",buffer);
+      printf("%s\nend\n\n",buffer);
       write(fd,buffer,strlen(buffer));
        printf("im buff1: %s\n",buffer);
       /*html을가져오고 다시 표시하는 부분같음*/
